@@ -22,6 +22,7 @@ public class StudentDAO {
                 put( 1, new Student(1, "João","Sistemas"));
                 put( 2, new Student(2, "Maria","Psicologia"));
                 put( 3, new Student(3, "Carol","Direito"));
+                put( 4, new Student(4, "teste","testando"));
             }
         };
     }

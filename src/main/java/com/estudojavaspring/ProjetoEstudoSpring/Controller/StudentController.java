@@ -4,6 +4,7 @@ import com.estudojavaspring.ProjetoEstudoSpring.Entity.Student;
 import com.estudojavaspring.ProjetoEstudoSpring.Error.ResourceNotFoundException;
 import com.estudojavaspring.ProjetoEstudoSpring.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,9 @@ public class StudentController {
         O response retorna o conteúdo solicitado e também o status da requisição
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> listAll(){
+    public ResponseEntity<?> listAll(Pageable pageable){
 //        System.out.println(dateUtil.formatLocalDateTimeToDatabaseStyle(LocalDateTime.now()));
-        return new ResponseEntity<>(studentRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(studentRepository.findAll(pageable), HttpStatus.OK);
     }
 
     /*

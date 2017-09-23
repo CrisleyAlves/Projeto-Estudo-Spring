@@ -1,53 +1,77 @@
 package com.estudojavaspring.ProjetoEstudoSpring.Controller;
 
 import com.estudojavaspring.ProjetoEstudoSpring.Entity.Student;
-import com.estudojavaspring.ProjetoEstudoSpring.Service.StudentService;
+import com.estudojavaspring.ProjetoEstudoSpring.Error.CustomErrorType;
+import com.estudojavaspring.ProjetoEstudoSpring.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
 
 /**
  * Created by Crisley on 20/09/2017.
  */
 
 @RestController()
-@ComponentScan( basePackages = "com.estudojavaspring.ProjetoEstudoSpring")
+@RequestMapping("students")
 public class StudentController {
 
     @Autowired
-    private StudentService studentService;
+    private final StudentRepository studentRepository;
 
-    @RequestMapping( value = "/students", method = RequestMethod.GET)
-    public Collection<Student> getAllStudents(){
-        return studentService.getAllStudents();
+    @Autowired
+    public StudentController(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    @RequestMapping(value = "/students/{id}", method = RequestMethod.GET)
-    public Student getStudentById(@PathVariable("id") int id){
-        return this.studentService.getStudentById(id);
+
+    /*
+        O response retorna o conteúdo solicitado e também o status da requisição
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<?> listAll(){
+//        System.out.println(dateUtil.formatLocalDateTimeToDatabaseStyle(LocalDateTime.now()));
+        return new ResponseEntity<>(studentRepository.findAll(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/students/remove/{id}", method = RequestMethod.DELETE)
-    public void deleteStudentById(@PathVariable("id") int id){
-        this.studentService.removeStudentById(id);
+    /*
+        O path com {id} -> é recomendado, por questão de boa prática, segundo o próprio SpringBoot
+     */
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+    public ResponseEntity<?> getStudentById(@PathVariable("id") Long id){
+
+        Student student = null;
+        student = this.studentRepository.findOne(id);
+
+        if(student == null){
+            return new ResponseEntity<>(new CustomErrorType("Estudante não encontrado"), HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(studentRepository.findOne(id), HttpStatus.OK);
+        }
     }
 
-    @RequestMapping(value = "/students/update/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String updateStudent(@RequestBody Student student){
-        this.studentService.updateStudent(student);
+    @RequestMapping(method = RequestMethod.GET, path = "/findbyname/{name}")
+    public ResponseEntity<?> findByName(@PathVariable String name){
+        return new ResponseEntity<>(studentRepository.findByNameIgnoreCaseContaining(name), HttpStatus.OK);
 
-        return "foi";
     }
 
-    @RequestMapping(value = "/students/insert/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String insertStudent(@RequestBody Student student){
+    @RequestMapping(path = "/insert/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> insertStudent(@RequestBody Student student){
+        return new ResponseEntity<>(this.studentRepository.save(student), HttpStatus.CREATED);
 
-        this.studentService.insertStudent(student);
+    }
 
-        return "foi";
+    @RequestMapping(path = "/update/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateStudent(@RequestBody Student student){
+        return new ResponseEntity<>(this.studentRepository.save(student), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/remove/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteStudentById(@PathVariable("id") Long id){
+        this.studentRepository.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

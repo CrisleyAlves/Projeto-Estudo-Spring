@@ -1,5 +1,9 @@
 package com.estudojavaspring.ProjetoEstudoSpring.Error;
 
+/**
+ * Created by Crisley on 23/09/2017.
+ */
+
 public class CustomErrorType {
 
     private  String errorMessage;

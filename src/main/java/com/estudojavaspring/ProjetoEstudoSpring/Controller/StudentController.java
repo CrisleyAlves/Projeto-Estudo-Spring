@@ -1,13 +1,16 @@
 package com.estudojavaspring.ProjetoEstudoSpring.Controller;
 
 import com.estudojavaspring.ProjetoEstudoSpring.Entity.Student;
-import com.estudojavaspring.ProjetoEstudoSpring.Error.CustomErrorType;
+import com.estudojavaspring.ProjetoEstudoSpring.Error.ResourceNotFoundException;
 import com.estudojavaspring.ProjetoEstudoSpring.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * Created by Crisley on 20/09/2017.
@@ -25,7 +28,6 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
 
-
     /*
         O response retorna o conteúdo solicitado e também o status da requisição
      */
@@ -40,15 +42,10 @@ public class StudentController {
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable("id") Long id){
+        verifyIfStudentExists(id);
+        Student student = this.studentRepository.findOne(id);
+        return new ResponseEntity<>(studentRepository.findOne(id), HttpStatus.OK);
 
-        Student student = null;
-        student = this.studentRepository.findOne(id);
-
-        if(student == null){
-            return new ResponseEntity<>(new CustomErrorType("Estudante não encontrado"), HttpStatus.NOT_FOUND);
-        }else{
-            return new ResponseEntity<>(studentRepository.findOne(id), HttpStatus.OK);
-        }
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/findbyname/{name}")
@@ -58,20 +55,30 @@ public class StudentController {
     }
 
     @RequestMapping(path = "/insert/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> insertStudent(@RequestBody Student student){
+    @Transactional
+    public ResponseEntity<?> insertStudent(@Valid @RequestBody Student student){
+        this.studentRepository.save(student);
         return new ResponseEntity<>(this.studentRepository.save(student), HttpStatus.CREATED);
 
     }
 
     @RequestMapping(path = "/update/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateStudent(@RequestBody Student student){
+        verifyIfStudentExists(student.getId());
         return new ResponseEntity<>(this.studentRepository.save(student), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/remove/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStudentById(@PathVariable("id") Long id){
+        verifyIfStudentExists(id);
         this.studentRepository.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void verifyIfStudentExists(Long id){
+        if(this.studentRepository.findOne(id) == null) {
+            throw new ResourceNotFoundException("O estudante com o código: " + id + " não foi encontrado");
+        }
     }
 
 

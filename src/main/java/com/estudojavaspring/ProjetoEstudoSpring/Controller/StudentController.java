@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +45,8 @@ public class StudentController {
         O path com {id} -> é recomendado, por questão de boa prática, segundo o próprio SpringBoot
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getStudentById(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails){
+        System.out.println(userDetails);
         verifyIfStudentExists(id);
         Student student = this.studentRepository.findOne(id);
         return new ResponseEntity<>(studentRepository.findOne(id), HttpStatus.OK);
@@ -69,6 +73,8 @@ public class StudentController {
         return new ResponseEntity<>(this.studentRepository.save(student), HttpStatus.OK);
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(path = "/remove/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStudentById(@PathVariable("id") Long id){
         verifyIfStudentExists(id);

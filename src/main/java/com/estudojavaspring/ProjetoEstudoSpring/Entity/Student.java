@@ -8,8 +8,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "students")
 public class Student extends AbstractEntity {
 
     @NotEmpty(message = "O nome do estudante não foi preenchido")

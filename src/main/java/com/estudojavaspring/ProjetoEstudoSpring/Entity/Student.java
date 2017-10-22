@@ -13,6 +13,34 @@ import java.util.List;
 @Table(name = "students")
 public class Student extends AbstractEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "stu_id")
+    private Long id;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractEntity)) return false;
+
+        Student that = (Student) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @NotEmpty(message = "O nome do estudante não foi preenchido")
     @Column(name = "name")
     private String name;
@@ -21,7 +49,7 @@ public class Student extends AbstractEntity {
     @Column(name = "course")
     private String course;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Phone.class)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Phone.class, orphanRemoval = true)
     private List<Phone> phones;
 
     public String getCourse() {

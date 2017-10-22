@@ -2,6 +2,7 @@ package com.estudojavaspring.ProjetoEstudoSpring.Entity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Crisley Alves on 21, out, 2017
@@ -10,12 +11,11 @@ import java.util.List;
 @Table(name = "tipo")
 public class Type extends AbstractEntity{
 
-
     @Column(name = "nome")
     private String nome;
 
     @OneToMany(mappedBy = "tipo", cascade = CascadeType.ALL, targetEntity = Phone.class)
-    private List<Phone> phones;
+    private Set<Phone> phones;
 
     public String getNome() {
         return nome;
@@ -25,11 +25,11 @@ public class Type extends AbstractEntity{
         this.nome = nome;
     }
 
-    public List<Phone> getPhones() {
+    public Set<Phone> getPhones() {
         return phones;
     }
 
-    public void setPhones(List<Phone> phones) {
+    public void setPhones(Set<Phone> phones) {
         this.phones = phones;
     }
 }

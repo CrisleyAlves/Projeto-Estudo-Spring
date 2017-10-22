@@ -41,7 +41,6 @@ public class UserController {
     public ResponseEntity<?> insertStudent(@Valid @RequestBody User user){
         this.userRepository.save(user);
         return new ResponseEntity<>(this.userRepository.save(user), HttpStatus.CREATED);
-
     }
 
 }

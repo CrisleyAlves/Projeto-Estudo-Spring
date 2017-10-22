@@ -6,9 +6,8 @@ package com.estudojavaspring.ProjetoEstudoSpring.Entity;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -21,6 +20,9 @@ public class Student extends AbstractEntity {
     @NotEmpty(message = "O email do do estudante não foi preenchido")
     @Column(name = "course")
     private String course;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Phone.class)
+    private List<Phone> phones;
 
     public String getCourse() {
         return course;
@@ -37,5 +39,13 @@ public class Student extends AbstractEntity {
     public void setCourse(String course) {
 
         this.course = course;
+    }
+
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
     }
 }

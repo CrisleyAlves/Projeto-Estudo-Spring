@@ -1,5 +1,8 @@
 package com.estudojavaspring.ProjetoEstudoSpring.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -17,11 +20,13 @@ public class Phone implements Serializable{
     @Column(name = "numero", length = 9, nullable = false)
     private String numero;
 
-    @Column(name = "student")
-    private int student;
+    @ManyToOne(targetEntity = Student.class)
+    @JsonBackReference
+    private Student student;
 
-    @Column(name = "tipo")
-    private int tipo;
+    @ManyToOne(targetEntity = Type.class)
+    @JsonBackReference
+    private Type tipo;
 
     public String getNumero() {
         return numero;
@@ -39,23 +44,19 @@ public class Phone implements Serializable{
         this.id = id;
     }
 
-    public Integer getStudent() {
+    public Student getStudent() {
         return student;
     }
 
-    public void setStudent(Integer student) {
+    public void setStudent(Student student) {
         this.student = student;
     }
 
-    public void setStudent(int student) {
-        this.student = student;
-    }
-
-    public int getTipo() {
+    public Type getTipo() {
         return tipo;
     }
 
-    public void setTipo(int tipo) {
+    public void setTipo(Type tipo) {
         this.tipo = tipo;
     }
 }

@@ -4,6 +4,9 @@ package com.estudojavaspring.ProjetoEstudoSpring.Entity;
  * Created by Crisley on 20/09/2017.
  */
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -49,7 +52,9 @@ public class Student extends AbstractEntity {
     @Column(name = "course")
     private String course;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Phone.class, orphanRemoval = true)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @Fetch(FetchMode.SUBSELECT)
     private List<Phone> phones;
 
     public String getCourse() {
